@@ -6,7 +6,7 @@ import (
 )
 
 type Config struct {
-	Environment     string
+	Environment     string // TODO: validate enabled values (development, test and production)
 	ApplicationName string
 	ApplicationPort string
 	DatabaseConfig  DatabaseConfig
