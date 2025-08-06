@@ -1,11 +1,12 @@
 package server
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/guilhermecosales/security-service/internal/routes"
-	"net/http"
-	"time"
 )
 
 type Server struct {
