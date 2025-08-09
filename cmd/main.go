@@ -15,7 +15,10 @@ func main() {
 	}
 
 	conn, err := database.NewDatabase(envConfig)
-
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to connect to database")
+	}
+	defer conn.Close()
 	_ = user.NewUserRepository(conn)
 
 	srv := server.New(envConfig)

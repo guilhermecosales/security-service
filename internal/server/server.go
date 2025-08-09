@@ -24,7 +24,7 @@ func New(config *config.Config) *http.Server {
 	})
 
 	return &http.Server{
-		Addr:         config.ApplicationPort,
+		Addr:         ":" + config.ApplicationPort,
 		Handler:      r,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
