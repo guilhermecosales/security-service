@@ -25,7 +25,7 @@ type DatabaseConfig struct {
 func LoadEnvironmentVariables() (*Config, error) {
 	cfg := &Config{
 		Environment:     getEnv("ENVIRONMENT", "production"),
-		ApplicationName: getEnv("APP_NAME", "security-service"),
+		ApplicationName: getEnv("APPLICATION_NAME", "security-service"),
 		ApplicationPort: getEnv("APPLICATION_PORT", "3001"),
 		DatabaseConfig: DatabaseConfig{
 			Host:         getEnv("DATABASE_HOST", "localhost"),
