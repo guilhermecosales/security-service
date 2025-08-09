@@ -1,8 +1,9 @@
 package config
 
 import (
-	_ "github.com/joho/godotenv/autoload"
 	"os"
+
+	_ "github.com/joho/godotenv/autoload"
 )
 
 type Config struct {
@@ -13,10 +14,11 @@ type Config struct {
 }
 
 type DatabaseConfig struct {
-	Host     string
-	Port     string
-	Username string
-	Password string
+	Host         string
+	Port         string
+	Username     string
+	Password     string
+	DatabaseName string
 }
 
 func LoadEnvironmentVariables() (*Config, error) {
@@ -25,10 +27,11 @@ func LoadEnvironmentVariables() (*Config, error) {
 		ApplicationName: getEnv("APP_NAME", "security-service"),
 		ApplicationPort: getEnv("APPLICATION_PORT", "3001"),
 		DatabaseConfig: DatabaseConfig{
-			Host:     getEnv("DATABASE_HOST", "localhost"),
-			Port:     getEnv("DATABASE_PORT", "5432"),
-			Username: getEnv("DATABASE_USER", "postgres"),
-			Password: getEnv("DATABASE_PASSWORD", "postgres"),
+			Host:         getEnv("DATABASE_HOST", "localhost"),
+			Port:         getEnv("DATABASE_PORT", "5432"),
+			Username:     getEnv("DATABASE_USER", "postgres"),
+			Password:     getEnv("DATABASE_PASSWORD", "postgres"),
+			DatabaseName: getEnv("DATABASE_NAME", "security_service"),
 		},
 	}
 
