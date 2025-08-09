@@ -1,19 +1,25 @@
 package main
 
 import (
-	"github.com/guilhermecosales/security-service/config"
+	"github.com/guilhermecosales/security-service/internal/database"
+	"github.com/guilhermecosales/security-service/internal/repository/user"
 	"github.com/guilhermecosales/security-service/internal/server"
+	"github.com/guilhermecosales/security-service/pkg/config"
 	"github.com/rs/zerolog/log"
 )
 
 func main() {
-	env, err := config.LoadEnvironmentVariables()
+	envConfig, err := config.LoadEnvironmentVariables()
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to load environment variables")
 	}
 
-	srv := server.New(":" + env.ApplicationPort)
+	conn, err := database.NewDatabase(envConfig)
 
-	log.Info().Msgf("Starting '%s' in '%s' mode on port :%s", env.ApplicationName, env.Environment, env.ApplicationPort)
+	_ = user.NewUserRepository(conn)
+
+	srv := server.New(envConfig)
+	log.Info().Msgf("Starting '%s' in '%s' mode on port :%s",
+		envConfig.ApplicationName, envConfig.Environment, envConfig.ApplicationPort)
 	log.Fatal().Err(srv.ListenAndServe())
 }

@@ -7,14 +7,10 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/guilhermecosales/security-service/internal/routes"
+	"github.com/guilhermecosales/security-service/pkg/config"
 )
 
-type Server struct {
-	addr string
-	mux  *http.ServeMux
-}
-
-func New(addr string) *http.Server {
+func New(config *config.Config) *http.Server {
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
@@ -28,7 +24,7 @@ func New(addr string) *http.Server {
 	})
 
 	return &http.Server{
-		Addr:         addr,
+		Addr:         config.ApplicationPort,
 		Handler:      r,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
