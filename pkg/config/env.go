@@ -4,6 +4,7 @@ import (
 	"os"
 
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/rs/zerolog/log"
 )
 
 type Config struct {
@@ -43,5 +44,6 @@ func getEnv(key, fallback string) string {
 		return value
 	}
 
+	log.Warn().Msg("Environment variable " + key + " not set, using default value " + fallback)
 	return fallback
 }
