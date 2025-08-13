@@ -1,9 +1,15 @@
 package main
 
 import (
+	"time"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/guilhermecosales/security-service/internal/database"
+	"github.com/guilhermecosales/security-service/internal/handlers"
 	"github.com/guilhermecosales/security-service/internal/repository/user"
 	"github.com/guilhermecosales/security-service/internal/server"
+	"github.com/guilhermecosales/security-service/internal/service"
 	"github.com/guilhermecosales/security-service/pkg/config"
 	"github.com/rs/zerolog/log"
 )
@@ -26,9 +32,18 @@ func main() {
 	}
 	defer m.Close()
 
-	_ = user.NewUserRepository(conn)
+	userRepo := user.NewUserRepository(conn)
+	userService := service.NewUserService(userRepo)
 
-	srv := server.New(envConfig)
+	r := chi.NewRouter()
+	r.Use(middleware.RequestID, middleware.RealIP, middleware.Logger, middleware.Recoverer)
+	r.Use(middleware.Timeout(60 * time.Second))
+
+	handlers.NewHealthHandler(r)
+	handlers.NewUserHandler(r, userService)
+
+	srv := server.NewServer(envConfig, r)
+
 	log.Info().Msgf("Starting '%s' in '%s' mode on port :%s",
 		envConfig.ApplicationName, envConfig.Environment, envConfig.ApplicationPort)
 	log.Fatal().Err(srv.ListenAndServe())
