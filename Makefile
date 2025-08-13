@@ -1,10 +1,7 @@
-MIGRATIONS_PATH=./migrations
+all: setup run
 
-migrate:
-
-migrate-up:
-
-migrate-down:
+setup:
+	docker compose -f ./deployments/docker-compose.yml up -d
 
 run:
 	go run ./cmd/main.go
