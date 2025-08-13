@@ -19,6 +19,13 @@ func main() {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
 	defer conn.Close()
+
+	m, err := database.NewMigration(conn)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to create migration")
+	}
+	defer m.Close()
+
 	_ = user.NewUserRepository(conn)
 
 	srv := server.New(envConfig)
