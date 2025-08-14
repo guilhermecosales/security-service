@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
+	"github.com/guilhermecosales/security-service/internal/domain/model"
 	"github.com/guilhermecosales/security-service/internal/repository/user"
-	"github.com/guilhermecosales/security-service/internal/repository/user/model"
 )
 
 type UserService struct {

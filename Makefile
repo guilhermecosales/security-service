@@ -4,4 +4,4 @@ setup:
 	docker compose -f ./deployments/docker-compose.yml up -d
 
 run:
-	go run ./cmd/main.go
+	go run ./cmd/security-service/main.go

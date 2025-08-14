@@ -5,8 +5,8 @@ import (
 	"database/sql"
 
 	"github.com/google/uuid"
+	"github.com/guilhermecosales/security-service/internal/domain/model"
 	"github.com/guilhermecosales/security-service/internal/repository"
-	"github.com/guilhermecosales/security-service/internal/repository/user/model"
 )
 
 type UserRepository struct {
