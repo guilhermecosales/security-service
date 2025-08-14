@@ -7,7 +7,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/guilhermecosales/security-service/internal/database"
 	"github.com/guilhermecosales/security-service/internal/handlers"
-	"github.com/guilhermecosales/security-service/internal/repository/user"
+	"github.com/guilhermecosales/security-service/internal/repository"
 	"github.com/guilhermecosales/security-service/internal/server"
 	"github.com/guilhermecosales/security-service/internal/service"
 	"github.com/guilhermecosales/security-service/pkg/config"
@@ -32,7 +32,7 @@ func main() {
 	}
 	defer m.Close()
 
-	userRepo := user.NewUserRepository(conn)
+	userRepo := repository.NewUserRepository(conn)
 	userService := service.NewUserService(userRepo)
 
 	r := chi.NewRouter()

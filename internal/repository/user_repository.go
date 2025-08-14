@@ -1,4 +1,4 @@
-package user
+package repository
 
 import (
 	"context"
@@ -6,14 +6,13 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/guilhermecosales/security-service/internal/domain/model"
-	"github.com/guilhermecosales/security-service/internal/repository"
 )
 
 type UserRepository struct {
 	db *sql.DB
 }
 
-var _ repository.UserRepository = (*UserRepository)(nil)
+var _ UserRepository = (*UserRepository)(nil)
 
 func NewUserRepository(db *sql.DB) *UserRepository {
 	return &UserRepository{

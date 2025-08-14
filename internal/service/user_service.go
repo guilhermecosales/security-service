@@ -4,14 +4,14 @@ import (
 	"context"
 
 	"github.com/guilhermecosales/security-service/internal/domain/model"
-	"github.com/guilhermecosales/security-service/internal/repository/user"
+	"github.com/guilhermecosales/security-service/internal/repository"
 )
 
 type UserService struct {
-	repository *user.UserRepository
+	repository *repository.UserRepository
 }
 
-func NewUserService(repository *user.UserRepository) *UserService {
+func NewUserService(repository *repository.UserRepository) *UserService {
 	return &UserService{repository: repository}
 }
 
