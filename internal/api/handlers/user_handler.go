@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/guilhermecosales/security-service/internal/service"
+	"github.com/guilhermecosales/security-service/internal/domain/service"
 )
 
 type UserHandler struct {

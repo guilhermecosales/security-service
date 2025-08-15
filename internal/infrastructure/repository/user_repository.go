@@ -8,11 +8,18 @@ import (
 	"github.com/guilhermecosales/security-service/internal/domain/model"
 )
 
+type Repository interface {
+	CreateUser(ctx context.Context, user model.User) (*model.User, error)
+	GetUser(ctx context.Context, userID uuid.UUID) (*model.User, error)
+	UpdateUser(ctx context.Context, userID uuid.UUID, user model.User) (*model.User, error)
+	DeleteUser(ctx context.Context, userID uuid.UUID) error
+}
+
 type UserRepository struct {
 	db *sql.DB
 }
 
-var _ UserRepository = (*UserRepository)(nil)
+var _ Repository = (*UserRepository)(nil)
 
 func NewUserRepository(db *sql.DB) *UserRepository {
 	return &UserRepository{

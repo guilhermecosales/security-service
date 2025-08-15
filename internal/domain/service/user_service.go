@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/guilhermecosales/security-service/internal/domain/model"
-	"github.com/guilhermecosales/security-service/internal/repository"
+	"github.com/guilhermecosales/security-service/internal/infrastructure/repository"
 )
 
 type UserService struct {

@@ -5,11 +5,11 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/guilhermecosales/security-service/internal/database"
-	"github.com/guilhermecosales/security-service/internal/handlers"
-	"github.com/guilhermecosales/security-service/internal/repository"
+	handlers2 "github.com/guilhermecosales/security-service/internal/api/handlers"
+	"github.com/guilhermecosales/security-service/internal/domain/service"
+	database2 "github.com/guilhermecosales/security-service/internal/infrastructure/database"
+	"github.com/guilhermecosales/security-service/internal/infrastructure/repository"
 	"github.com/guilhermecosales/security-service/internal/server"
-	"github.com/guilhermecosales/security-service/internal/service"
 	"github.com/guilhermecosales/security-service/pkg/config"
 	"github.com/rs/zerolog/log"
 )
@@ -20,13 +20,13 @@ func main() {
 		log.Fatal().Err(err).Msg("Failed to load environment variables")
 	}
 
-	conn, err := database.NewDatabase(envConfig)
+	conn, err := database2.NewDatabase(envConfig)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
 	defer conn.Close()
 
-	m, err := database.NewMigration(conn)
+	m, err := database2.NewMigration(conn)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to create migration")
 	}
@@ -39,8 +39,8 @@ func main() {
 	r.Use(middleware.RequestID, middleware.RealIP, middleware.Logger, middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	handlers.NewHealthHandler(r)
-	handlers.NewUserHandler(r, userService)
+	handlers2.NewHealthHandler(r)
+	handlers2.NewUserHandler(r, userService)
 
 	srv := server.NewServer(envConfig, r)
 
