@@ -6,10 +6,11 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/guilhermecosales/security-service/internal/domain/model"
+	"github.com/rs/zerolog/log"
 )
 
 type Repository interface {
-	CreateUser(ctx context.Context, user model.User) (*model.User, error)
+	CreateUser(ctx context.Context, user *model.User) (*model.User, error)
 	GetUser(ctx context.Context, userID uuid.UUID) (*model.User, error)
 	UpdateUser(ctx context.Context, userID uuid.UUID, user model.User) (*model.User, error)
 	DeleteUser(ctx context.Context, userID uuid.UUID) error
@@ -27,7 +28,7 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 	}
 }
 
-func (r *UserRepository) CreateUser(ctx context.Context, user model.User) (*model.User, error) {
+func (r *UserRepository) CreateUser(ctx context.Context, user *model.User) (*model.User, error) {
 	query := `
 		INSERT INTO users (
 			user_id, first_name, last_name, email, password, locked, credentials_expired, enabled
@@ -37,7 +38,7 @@ func (r *UserRepository) CreateUser(ctx context.Context, user model.User) (*mode
 
 	var createdUser model.User
 	err := r.db.QueryRowContext(ctx, query,
-		user.UserID,
+		uuid.New(),
 		user.FirstName,
 		user.LastName,
 		user.Email,
@@ -55,7 +56,9 @@ func (r *UserRepository) CreateUser(ctx context.Context, user model.User) (*mode
 		&createdUser.CredentialsExpired,
 		&createdUser.Enabled,
 	)
+
 	if err != nil {
+		log.Err(err).Msg("error creating user")
 		return nil, err
 	}
 
