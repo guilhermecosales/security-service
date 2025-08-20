@@ -20,3 +20,13 @@ func RequestToModel(userRequest *dto.Request) *model.User {
 		UpdatedAt:          time.Now(),
 	}
 }
+
+func ModelToResponse(userModel *model.User) *dto.Response {
+	return &dto.Response{
+		UserID:    userModel.UserID,
+		FirstName: userModel.FirstName,
+		LastName:  userModel.LastName,
+		Email:     userModel.Email,
+		Enabled:   userModel.Enabled,
+	}
+}

@@ -66,7 +66,15 @@ func (r *UserRepository) CreateUser(ctx context.Context, user *model.User) (*mod
 }
 
 func (r *UserRepository) GetUser(ctx context.Context, userID uuid.UUID) (*model.User, error) {
-	return nil, nil
+	query := `SELECT * FROM users WHERE user_id = $1`
+
+	var foundUser model.User
+	if err := r.db.QueryRowContext(ctx, query, userID).Scan(&foundUser); err != nil {
+		log.Err(err).Msgf(`error to retrieve user with id: %s`, userID)
+		return nil, err
+	}
+
+	return &foundUser, nil
 }
 
 func (r *UserRepository) UpdateUser(ctx context.Context, userID uuid.UUID, user model.User) (*model.User, error) {
@@ -74,5 +82,13 @@ func (r *UserRepository) UpdateUser(ctx context.Context, userID uuid.UUID, user 
 }
 
 func (r *UserRepository) DeleteUser(ctx context.Context, userID uuid.UUID) error {
+	query := `DELETE FROM users WHERE user_id = $1`
+
+	_, err := r.db.ExecContext(ctx, query, userID)
+	if err != nil {
+		log.Err(err).Msgf(`error to delete user with id: %s`, userID)
+		return err
+	}
+
 	return nil
 }

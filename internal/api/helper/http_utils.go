@@ -1,4 +1,4 @@
-package http
+package helper
 
 import (
 	"encoding/json"
@@ -8,7 +8,7 @@ import (
 )
 
 func WriteResponse(w http.ResponseWriter, statusCode int, payload any) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(statusCode)
 
 	if payload != nil {

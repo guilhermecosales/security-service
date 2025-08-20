@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
 	"github.com/guilhermecosales/security-service/internal/api/dto"
-	suite "github.com/guilhermecosales/security-service/internal/api/http"
+	"github.com/guilhermecosales/security-service/internal/api/helper"
 	"github.com/guilhermecosales/security-service/internal/api/mapper"
 	"github.com/guilhermecosales/security-service/internal/domain/service"
 )
@@ -38,22 +38,25 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var requestUser dto.Request
 
 	if err := json.NewDecoder(r.Body).Decode(&requestUser); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-	}
-
-	if err := h.validator.Struct(requestUser); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-	}
-
-	userModel := mapper.RequestToModel(&requestUser)
-	createdUser, err := h.service.CreateUser(context.Background(), userModel)
-
-	if err != nil {
-		suite.WriteResponse(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		helper.WriteResponse(w, http.StatusBadRequest, nil)
 		return
 	}
 
-	suite.WriteResponse(w, http.StatusOK, createdUser)
+	if err := h.validator.Struct(requestUser); err != nil {
+		helper.WriteResponse(w, http.StatusBadRequest, nil)
+		return
+	}
+
+	userModel := mapper.RequestToModel(&requestUser)
+
+	createdUser, err := h.service.CreateUser(context.Background(), userModel)
+	if err != nil {
+		helper.WriteResponse(w, http.StatusInternalServerError, nil)
+		return
+	}
+
+	userResponse := mapper.ModelToResponse(createdUser)
+	helper.WriteResponse(w, http.StatusCreated, userResponse)
 }
 
 func (h *UserHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
