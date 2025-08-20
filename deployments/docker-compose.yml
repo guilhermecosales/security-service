@@ -4,6 +4,7 @@ services:
   postgres:
     image: postgres:9
     container_name: postgres
+    restart: on-failure
     environment:
       POSTGRES_DB: security_service
       POSTGRES_USER: postgres
