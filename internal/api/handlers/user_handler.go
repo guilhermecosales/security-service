@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 	"github.com/guilhermecosales/security-service/internal/api/dto"
 	"github.com/guilhermecosales/security-service/internal/api/helper"
 	"github.com/guilhermecosales/security-service/internal/api/mapper"
@@ -28,9 +29,8 @@ func NewUserHandler(r chi.Router, s *service.UserService) {
 		r.Post("/", h.CreateUser)
 		r.Get("/", h.ListUsers)
 		r.Get("/{id}", h.GetUserByID)
-		r.Put("/{id}", h.UpdateUser)
 		r.Patch("/{id}", h.PartialUpdateUser)
-		r.Delete("/", h.DeleteUser)
+		r.Delete("/{id}", h.DeleteUser)
 	})
 }
 
@@ -67,14 +67,31 @@ func (h *UserHandler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Get user by ID"))
 }
 
-func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Update user"))
-}
-
 func (h *UserHandler) PartialUpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Partial update user"))
 }
 
 func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Delete user"))
+	pathValue := r.PathValue("id")
+	if pathValue == "" {
+		helper.WriteResponse(w, http.StatusBadRequest, nil)
+		return
+	}
+
+	userID, err := uuid.Parse(pathValue)
+	if err != nil {
+		helper.WriteResponse(w, http.StatusBadRequest, map[string]string{
+			"error": "Invalid User Identification",
+		})
+		return
+	}
+
+	err = h.service.DeleteUser(r.Context(), userID)
+	if err != nil {
+		helper.WriteResponse(w, http.StatusInternalServerError, nil)
+		return
+	}
+
+	helper.WriteResponse(w, http.StatusNoContent, nil)
+	return
 }

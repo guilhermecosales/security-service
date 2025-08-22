@@ -6,7 +6,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/guilhermecosales/security-service/internal/domain/model"
-	"github.com/rs/zerolog/log"
 )
 
 type Repository interface {
@@ -58,7 +57,6 @@ func (r *UserRepository) CreateUser(ctx context.Context, user *model.User) (*mod
 	)
 
 	if err != nil {
-		log.Err(err).Msg("error creating user")
 		return nil, err
 	}
 
@@ -66,11 +64,10 @@ func (r *UserRepository) CreateUser(ctx context.Context, user *model.User) (*mod
 }
 
 func (r *UserRepository) GetUser(ctx context.Context, userID uuid.UUID) (*model.User, error) {
-	query := `SELECT * FROM users WHERE user_id = $1`
+	query := "SELECT * FROM users WHERE user_id = $1"
 
 	var foundUser model.User
 	if err := r.db.QueryRowContext(ctx, query, userID).Scan(&foundUser); err != nil {
-		log.Err(err).Msgf(`error to retrieve user with id: %s`, userID)
 		return nil, err
 	}
 
@@ -82,11 +79,10 @@ func (r *UserRepository) UpdateUser(ctx context.Context, userID uuid.UUID, user 
 }
 
 func (r *UserRepository) DeleteUser(ctx context.Context, userID uuid.UUID) error {
-	query := `DELETE FROM users WHERE user_id = $1`
+	query := "DELETE FROM users WHERE user_id = $1"
 
 	_, err := r.db.ExecContext(ctx, query, userID)
 	if err != nil {
-		log.Err(err).Msgf(`error to delete user with id: %s`, userID)
 		return err
 	}
 
