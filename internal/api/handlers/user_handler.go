@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 
@@ -49,7 +48,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	userModel := mapper.RequestToModel(&requestUser)
 
-	createdUser, err := h.service.CreateUser(context.Background(), userModel)
+	createdUser, err := h.service.CreateUser(r.Context(), userModel)
 	if err != nil {
 		helper.WriteResponse(w, http.StatusInternalServerError, nil)
 		return
