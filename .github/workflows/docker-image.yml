@@ -1,18 +1,14 @@
 name: Docker Image CI
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ ]
   workflow_run:
-    workflows: ["Go"]   # depende do workflow acima
+    workflows: [ "Go" ]   # depende do workflow acima
     types:
       - completed
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag security-service:$(date +%s)
+      - uses: actions/checkout@v4
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag security-service:$(date +%s)
