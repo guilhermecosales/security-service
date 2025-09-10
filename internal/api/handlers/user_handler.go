@@ -8,9 +8,9 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/guilhermecosales/security-service/internal/api/dto"
-	"github.com/guilhermecosales/security-service/internal/api/helper"
 	"github.com/guilhermecosales/security-service/internal/api/mapper"
 	"github.com/guilhermecosales/security-service/internal/domain/service"
+	"github.com/guilhermecosales/security-service/pkg/protocol"
 )
 
 type UserHandler struct {
@@ -37,12 +37,12 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var requestUser dto.Request
 
 	if err := json.NewDecoder(r.Body).Decode(&requestUser); err != nil {
-		helper.WriteResponse(w, http.StatusBadRequest, nil)
+		protocol.WriteResponse(w, http.StatusBadRequest, nil)
 		return
 	}
 
 	if err := h.validator.Struct(requestUser); err != nil {
-		helper.WriteResponse(w, http.StatusBadRequest, nil)
+		protocol.WriteResponse(w, http.StatusBadRequest, nil)
 		return
 	}
 
@@ -50,12 +50,12 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	createdUser, err := h.service.CreateUser(r.Context(), userModel)
 	if err != nil {
-		helper.WriteResponse(w, http.StatusInternalServerError, nil)
+		protocol.WriteResponse(w, http.StatusInternalServerError, nil)
 		return
 	}
 
 	userResponse := mapper.ModelToResponse(createdUser)
-	helper.WriteResponse(w, http.StatusCreated, userResponse)
+	protocol.WriteResponse(w, http.StatusCreated, userResponse)
 }
 
 func (h *UserHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
@@ -73,13 +73,13 @@ func (h *UserHandler) PartialUpdateUser(w http.ResponseWriter, r *http.Request) 
 func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	pathValue := r.PathValue("id")
 	if pathValue == "" {
-		helper.WriteResponse(w, http.StatusBadRequest, nil)
+		protocol.WriteResponse(w, http.StatusBadRequest, nil)
 		return
 	}
 
 	userID, err := uuid.Parse(pathValue)
 	if err != nil {
-		helper.WriteResponse(w, http.StatusBadRequest, map[string]string{
+		protocol.WriteResponse(w, http.StatusBadRequest, map[string]string{
 			"error": "Invalid User Identification",
 		})
 		return
@@ -87,10 +87,10 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	err = h.service.DeleteUser(r.Context(), userID)
 	if err != nil {
-		helper.WriteResponse(w, http.StatusInternalServerError, nil)
+		protocol.WriteResponse(w, http.StatusInternalServerError, nil)
 		return
 	}
 
-	helper.WriteResponse(w, http.StatusNoContent, nil)
+	protocol.WriteResponse(w, http.StatusNoContent, nil)
 	return
 }

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/guilhermecosales/security-service/internal/api/helper"
+	"github.com/guilhermecosales/security-service/pkg/protocol"
 )
 
 type HealthHandler struct {
@@ -17,7 +17,7 @@ func NewHealthHandler(r chi.Router) {
 }
 
 func healthCheck(w http.ResponseWriter, _ *http.Request) {
-	helper.WriteResponse(w, http.StatusOK, map[string]interface{}{
+	protocol.WriteResponse(w, http.StatusOK, map[string]interface{}{
 		"health": "OK",
 	})
 }
