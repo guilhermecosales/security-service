@@ -46,7 +46,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userModel := mapper.RequestToModel(&requestUser)
+	userModel := mapper.UserRequestToModel(&requestUser)
 
 	createdUser, err := h.service.CreateUser(r.Context(), userModel)
 	if err != nil {
@@ -54,7 +54,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userResponse := mapper.ModelToResponse(createdUser)
+	userResponse := mapper.ModelToUserResponse(createdUser)
 	protocol.WriteResponse(w, http.StatusCreated, userResponse)
 }
 

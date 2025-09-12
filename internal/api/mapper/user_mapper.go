@@ -7,7 +7,7 @@ import (
 	"github.com/guilhermecosales/security-service/internal/domain/model"
 )
 
-func RequestToModel(userRequest *dto.Request) *model.User {
+func UserRequestToModel(userRequest *dto.Request) *model.User {
 	return &model.User{
 		FirstName:          userRequest.FirstName,
 		LastName:           userRequest.LastName,
@@ -21,7 +21,7 @@ func RequestToModel(userRequest *dto.Request) *model.User {
 	}
 }
 
-func ModelToResponse(userModel *model.User) *dto.Response {
+func ModelToUserResponse(userModel *model.User) *dto.Response {
 	return &dto.Response{
 		UserID:    userModel.UserID,
 		FirstName: userModel.FirstName,
