@@ -7,6 +7,7 @@ import (
 	"github.com/guilhermecosales/security-service/internal/domain/model"
 	"github.com/guilhermecosales/security-service/internal/infrastructure/repository"
 	"github.com/rs/zerolog/log"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
@@ -18,6 +19,14 @@ func NewUserService(repository *repository.UserRepository) *UserService {
 }
 
 func (s *UserService) CreateUser(ctx context.Context, user *model.User) (*model.User, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to hash password")
+		return nil, err
+	}
+
+	user.Password = string(hashedPassword)
+
 	return s.repository.CreateUser(ctx, user)
 }
 

@@ -35,9 +35,11 @@ func (r *UserRepository) CreateUser(ctx context.Context, user *model.User) (*mod
 		RETURNING user_id, first_name, last_name, email, password, locked, credentials_expired, enabled
 	`
 
+	newUuid, _ := uuid.NewV7()
+
 	var createdUser model.User
 	err := r.db.QueryRowContext(ctx, query,
-		uuid.New(),
+		newUuid,
 		user.FirstName,
 		user.LastName,
 		user.Email,
