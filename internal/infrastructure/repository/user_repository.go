@@ -3,14 +3,17 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/guilhermecosales/security-service/internal/domain/model"
+	"github.com/pkg/errors"
 )
 
 type Repository interface {
 	CreateUser(ctx context.Context, user *model.User) (*model.User, error)
 	GetUser(ctx context.Context, userID uuid.UUID) (*model.User, error)
+	GetUserByEmail(ctx context.Context, userEmail string) (*model.User, error)
 	UpdateUser(ctx context.Context, userID uuid.UUID, user model.User) (*model.User, error)
 	DeleteUser(ctx context.Context, userID uuid.UUID) error
 }
@@ -20,6 +23,11 @@ type UserRepository struct {
 }
 
 var _ Repository = (*UserRepository)(nil)
+
+var (
+	ErrUserNotFound    = errors.New("user not found")
+	ErrUserQueryFailed = errors.New("failed to query user")
+)
 
 func NewUserRepository(db *sql.DB) *UserRepository {
 	return &UserRepository{
@@ -71,6 +79,35 @@ func (r *UserRepository) GetUser(ctx context.Context, userID uuid.UUID) (*model.
 	var foundUser model.User
 	if err := r.db.QueryRowContext(ctx, query, userID).Scan(&foundUser); err != nil {
 		return nil, err
+	}
+
+	return &foundUser, nil
+}
+
+func (r *UserRepository) GetUserByEmail(ctx context.Context, userEmail string) (*model.User, error) {
+	query := `
+		SELECT user_id, first_name, last_name, email, password, locked, credentials_expired, enabled
+		FROM users WHERE email = $1
+	`
+
+	var foundUser model.User
+	err := r.db.QueryRowContext(ctx, query, userEmail).
+		Scan(
+			&foundUser.UserID,
+			&foundUser.FirstName,
+			&foundUser.LastName,
+			&foundUser.Email,
+			&foundUser.Password,
+			&foundUser.Locked,
+			&foundUser.CredentialsExpired,
+			&foundUser.Enabled,
+		)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrUserNotFound
+		}
+		return nil, fmt.Errorf("%w", err)
 	}
 
 	return &foundUser, nil

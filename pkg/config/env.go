@@ -12,6 +12,7 @@ type Config struct {
 	ApplicationName string
 	ApplicationPort string
 	DatabaseConfig  DatabaseConfig
+	JWTConfig       JWTConfig
 }
 
 type DatabaseConfig struct {
@@ -22,11 +23,24 @@ type DatabaseConfig struct {
 	DatabaseName string
 }
 
+type JWTConfig struct {
+	SecretKey string
+	AUD       string
+	ISS       string
+	Duration  string
+}
+
 func LoadEnvironmentVariables() (*Config, error) {
 	cfg := &Config{
 		Environment:     getEnv("ENVIRONMENT", "production"),
 		ApplicationName: getEnv("APPLICATION_NAME", "security-service"),
 		ApplicationPort: getEnv("APPLICATION_PORT", "3001"),
+		JWTConfig: JWTConfig{
+			SecretKey: getEnv("SECRET_KEY", ""),
+			AUD:       getEnv("AUD", ""),
+			ISS:       getEnv("ISS", ""),
+			Duration:  getEnv("DURATION", ""),
+		},
 		DatabaseConfig: DatabaseConfig{
 			Host:         getEnv("DATABASE_HOST", "localhost"),
 			Port:         getEnv("DATABASE_PORT", "5432"),

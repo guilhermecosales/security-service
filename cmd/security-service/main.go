@@ -35,6 +35,9 @@ func main() {
 	userRepository := repository.NewUserRepository(conn)
 	userService := service.NewUserService(userRepository)
 
+	authenticationTokenService := service.NewAuthenticationTokenService(envConfig.JWTConfig)
+	authenticationService := service.NewAuthenticationService(userRepository, authenticationTokenService)
+
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
@@ -44,6 +47,7 @@ func main() {
 
 	handlers.NewHealthHandler(r)
 	handlers.NewUserHandler(r, userService)
+	handlers.NewAuthenticationHandler(r, authenticationService)
 
 	srv := server.NewServer(envConfig, r)
 
